@@ -1,9 +1,16 @@
+//  Class author:  Derin Soysal
+//  Date created:  11/24/25
+//  General description: 
+
 package com.pong;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class PongGame extends JPanel implements MouseMotionListener {
     static int width = 640; // this is the amount of pixels to the right side of the screen
@@ -14,6 +21,10 @@ public class PongGame extends JPanel implements MouseMotionListener {
     private int aiScore;
     private Ball ball;
     // step 1 add any other private variables you may need to play the game.
+    private Wall wall;
+    private SlowDown slow;
+    private Speedup speed;
+    private Paddle myPaddle;
 
     public PongGame() {
 
@@ -26,10 +37,13 @@ public class PongGame extends JPanel implements MouseMotionListener {
         aiScore.setVisible(true);
         userMouseY = 0;
         addMouseMotionListener(this);
-        ball = new Ball(200, 200, 10, 3, Color.RED, 10);
+        ball = new Ball(200, 200, 10, 3, Color.BLUE, 10);
 
         //create any other objects necessary to play the game.
-
+        myPaddle = new Paddle(0, 240, 50, 9, Color.WHITE);
+        speed = new Speedup(320, 240, 90, 90);
+        slow = new SlowDown(80, 60, 50, 50);
+        wall = new Wall(240, 320, 40, 15, Color.WHITE);
     }
 
     // precondition: None
@@ -57,7 +71,10 @@ public class PongGame extends JPanel implements MouseMotionListener {
         aiPaddle.draw(g);
         
         //call the "draw" function of any visual component you'd like to show up on the screen.
-
+        myPaddle.draw(g);
+        wall.draw(g);
+        speed.draw(g);
+        slow.draw(g);
     }
 
     // precondition: all required visual components are intialized to non-null
@@ -65,11 +82,32 @@ public class PongGame extends JPanel implements MouseMotionListener {
     // postcondition: one frame of the game is "played"
     public void gameLogic() {
         //add commands here to make the game play propperly
-        
+        ball.moveBall();
+        ball.bounceOffwalls(470, 10);
+
         aiPaddle.moveY(ball.getY());
+        myPaddle.moveY(userMouseY);
 
         if (aiPaddle.isTouching(ball)) {
            ball.reverseX();
+           //ball.setChangeX(-10);
+        }
+        if (myPaddle.isTouching(ball)){
+            ball.reverseX();
+            //ball.setChangeX(10);
+        }
+
+        if (wall.isTouching(ball))
+        {
+            ball.reverseX();
+        }
+
+        if(slow.isTouching(ball)){
+            ball.setChangeX(ball.getChangeX()*0.96);
+        }
+
+        if(speed.isTouching(ball)){
+            ball.setChangeX(ball.getChangeX()*1.06);
         }
  
         pointScored();
@@ -83,7 +121,14 @@ public class PongGame extends JPanel implements MouseMotionListener {
     // pixels) and the ai scores
     // if the ball goes off the left edge (0)
     public void pointScored() {
-
+        if(ball.getX() < 0){
+            aiScore++;
+            ball.setX(320);
+        }
+        if(ball.getX() > 630){
+            playerScore++;
+            ball.setX(320);
+        }
     }
 
     // you do not need to edit the below methods, but please do not remove them as
