@@ -43,7 +43,7 @@ public class PongGame extends JPanel implements MouseMotionListener {
         myPaddle = new Paddle(0, 240, 50, 9, Color.WHITE);
         speed = new Speedup(320, 240, 90, 90);
         slow = new SlowDown(80, 60, 50, 50);
-        wall = new Wall(240, 320, 40, 15, Color.WHITE);
+        wall = new Wall(240, 320, 80, 15, Color.WHITE);
     }
 
     // precondition: None
@@ -103,7 +103,7 @@ public class PongGame extends JPanel implements MouseMotionListener {
         }
 
         if(slow.isTouching(ball)){
-            ball.setChangeX(ball.getChangeX()*0.96);
+            ball.setChangeX(ball.getChangeX()*0.94);
         }
 
         if(speed.isTouching(ball)){
