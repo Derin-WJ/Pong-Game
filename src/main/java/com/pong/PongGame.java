@@ -1,6 +1,7 @@
 //  Class author:  Derin Soysal
 //  Date created:  11/24/25
-//  General description: 
+//  General description: This code will generate a pong game
+//with paddles, an AI that plays against you, a slow down box, a speed up box, and a wall.
 
 package com.pong;
 
